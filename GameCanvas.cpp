@@ -41,7 +41,7 @@ void GameCanvas::playerInput(int x, int y)
         return;
     }
 
-    // check input legit or not then progress one turn
+    // check input legit or not, if so then progress one turn
     Move playerMove(x*3/width,y*3/width); // pixal coordinate to board coordinate
     if(checkMoveLegit(playerMove))
     {
