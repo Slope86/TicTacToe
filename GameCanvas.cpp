@@ -276,5 +276,5 @@ void GameCanvas::getDisplayWidth()
 {
     int ScreenW  = (int) GetSystemMetrics(SM_CXSCREEN);
     int ScreenH = (int) GetSystemMetrics(SM_CYSCREEN);
-    width = def_width*(float)std::min((float)ScreenW/def_width,(float)ScreenH/def_high) - 20;
+    width = def_width*0.75*(float)std::min((float)ScreenW/def_width,(float)ScreenH/def_high) - 20;
 }
