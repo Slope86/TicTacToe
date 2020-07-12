@@ -1,10 +1,12 @@
 #include "GameCanvas.h"
 #include <bits/stdc++.h>
+#include <windows.h>
 
-using namespace std;
+using namespace cv;
 
 GameCanvas::GameCanvas()
 {
+    getDisplayWidth();
     newGame();
 }
 
@@ -79,7 +81,7 @@ void GameCanvas::aiMove()
 void GameCanvas::newGame()
 {
     winner = Winner::uncertain;
-    canvas = Mat(width+160, width, CV_8UC3, Scalar(255,255,255));
+    canvas = Mat(def_width+160, def_width, CV_8UC3, Scalar(255,255,255));
     for(int i=0; i<3; i++)
     {
         for(int j=0; j<3; j++)
@@ -126,17 +128,17 @@ void GameCanvas::gameEnd()
     switch (winner)
     {
     case Winner::human :
-        putText(canvas, std::string("human win !!!"), Point(width/10-15,width*7/6), 0, width/150, Scalar(0,255,0),3);
+        putText(canvas, std::string("human win !!!"), Point(def_width/10-15,def_width*7/6), 0, def_width/150, Scalar(0,255,0),3);
         break;
     case Winner::ai :
-        putText(canvas, std::string("AI win !!!"), Point(width/10-width/24,width*7/6), 0, width/150, Scalar(0,0,255),3);
+        putText(canvas, std::string("AI win !!!"), Point(def_width/10-def_width/24,def_width*7/6), 0, def_width/150, Scalar(0,0,255),3);
         break;
     case Winner::draw :
-        putText(canvas, std::string("Draw"), Point(width/4-width/120,width*7/6), 0, width/150, Scalar(0,255,0),3);
+        putText(canvas, std::string("Draw"), Point(def_width/4-def_width/120,def_width*7/6), 0, def_width/150, Scalar(0,255,0),3);
         break;
     }
     // tell user press space to start new game and wait
-    putText(canvas, std::string("right click to start a new game"), Point(width/10-width/60,width*5/4-10), 0, 1, Scalar(0,0,0),1);
+    putText(canvas, std::string("right click to start a new game"), Point(def_width/10-def_width/60,def_width*5/4-10), 0, 1, Scalar(0,0,0),1);
     displayCanvas();
 }
 
@@ -234,36 +236,45 @@ int GameCanvas::minSearch()
 
 void GameCanvas::displayCanvas()
 {
-    imshow("Tie Tac Toe", canvas);
+    cv::Mat resize_canvas;
+    cv::resize(canvas, resize_canvas, cv::Size(), (float)width/def_width, (float)width/def_width);
+    imshow("Tie Tac Toe", resize_canvas);
 }
 
 void GameCanvas::drawBoard()
 {
-    int thickness = width/100+1;
+    int thickness = def_width/100+1;
     int lineType = LINE_8;
     Scalar color = Scalar(0,0,0);
-    line(canvas, Point(width/3,1+width/50), Point(width/3,width*49/50), color, thickness, lineType );
-    line(canvas, Point(width*2/3,1+width/50), Point(width*2/3,width*49/50), color, thickness, lineType );
-    line(canvas, Point(1+width/50,width/3), Point(width*49/50,width/3), color, thickness, lineType );
-    line(canvas, Point(1+width/50,width*2/3), Point(width*49/50,width*2/3), color, thickness, lineType );
+    line(canvas, Point(def_width/3,1+def_width/50), Point(def_width/3,def_width*49/50), color, thickness, lineType );
+    line(canvas, Point(def_width*2/3,1+def_width/50), Point(def_width*2/3,def_width*49/50), color, thickness, lineType );
+    line(canvas, Point(1+def_width/50,def_width/3), Point(def_width*49/50,def_width/3), color, thickness, lineType );
+    line(canvas, Point(1+def_width/50,def_width*2/3), Point(def_width*49/50,def_width*2/3), color, thickness, lineType );
 }
 
 void GameCanvas::drawO(Move move)
 {
-    int thickness = width/100+1;
-    int rad = width/10;
+    int thickness = def_width/100+1;
+    int rad = def_width/10;
     Scalar color = Scalar(255,0,0);
-    Point origin(1*width/6+move.x*width/3,1*width/6+move.y*width/3);
+    Point origin(1*def_width/6+move.x*def_width/3,1*def_width/6+move.y*def_width/3);
     circle(canvas, origin, rad, color, thickness);
 }
 
 void GameCanvas::drawX(Move move)
 {
-    int thickness = width/100+1;
+    int thickness = def_width/100+1;
     int lineType = LINE_8;
     Scalar color = Scalar(0,0,255);
 
-    Point origin(width/6+move.x*width/3,width/6+move.y*width/3);
-    line(canvas, Point(origin.x-width/10,origin.y-width/10),Point(origin.x+width/10,origin.y+width/10), color, thickness, lineType );
-    line(canvas, Point(origin.x+width/10,origin.y-width/10),Point(origin.x-width/10,origin.y+width/10), color, thickness, lineType );
+    Point origin(def_width/6+move.x*def_width/3,def_width/6+move.y*def_width/3);
+    line(canvas, Point(origin.x-def_width/10,origin.y-def_width/10),Point(origin.x+def_width/10,origin.y+def_width/10), color, thickness, lineType );
+    line(canvas, Point(origin.x+def_width/10,origin.y-def_width/10),Point(origin.x-def_width/10,origin.y+def_width/10), color, thickness, lineType );
+}
+
+void GameCanvas::getDisplayWidth()
+{
+    int ScreenW  = (int) GetSystemMetrics(SM_CXSCREEN);
+    int ScreenH = (int) GetSystemMetrics(SM_CYSCREEN);
+    width = def_width*(float)std::min((float)ScreenW/def_width,(float)ScreenH/def_high) - 20;
 }

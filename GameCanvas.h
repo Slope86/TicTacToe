@@ -2,8 +2,6 @@
 #define GAMECANVAS_H
 #include <opencv2/opencv.hpp>
 
-using namespace cv;
-
 enum class Piece { human, ai, none};
 enum class Winner { human, ai, draw, uncertain};
 
@@ -25,9 +23,11 @@ public:
 class GameCanvas
 {
 private:
-    const int width = 600; // The width of the display window
+    const int def_width = 600;
+    const int def_high = 760; // The default resolution  of the display window
+    int width = 600;
     Piece board[3][3]; // Record what pieces are on the board
-    Mat canvas; // The canvas where we draw all the text, game board, piece
+    cv::Mat canvas; // The canvas where we draw all the text, game board, piece
     Winner winner; // Record the winner of current game (use to determine whether the game is still progress or already end)
     bool nextMoveAI; // If human moved first and draw in the last game,computer move first in the next game
 
@@ -70,8 +70,11 @@ public:
     void drawO(Move);
     void drawX(Move);
 
-    // Display game canvas to user
+    // Resize the game canvas to fit the user screen and display it
     void displayCanvas();
+
+    // get the resolution of user's screen and set the display width base on it;
+    void getDisplayWidth();
 };
 
 #endif // GAMECANVAS_H
