@@ -70,7 +70,7 @@ public:
     void drawO(Move);
     void drawX(Move);
 
-    // Resize the game canvas to fit the user screen and display it
+    // Resize the game-canvas to fit user's screen and then display it
     void displayCanvas();
 
     // get the resolution of user's screen and set the display width base on it;
