@@ -23,8 +23,8 @@ public:
 class GameCanvas
 {
 private:
-    const int def_width = 600; // The default resolution of the game-design
-    const int def_high = 760; // The default resolution of the game-design
+    const int def_width = 600;
+    const int def_high = 760; // The default resolution that the game designed with
     int width = 600; // The actual display width of the game (change base on user's screen width)
     Piece board[3][3]; // Record what pieces are on the board
     cv::Mat canvas; // The canvas where we draw all the text, game board, piece
