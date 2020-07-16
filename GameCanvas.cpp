@@ -120,7 +120,7 @@ Winner GameCanvas::checkWinner()
             board[0][2] == board[1][1] && board[1][1] == board[2][0] && board[1][1] != Piece::none )
         return (board[1][1]==Piece::bot) ? (Winner::bot) : (Winner::human) ;
 
-    for(int i=0; i<3; i++) // Check board full or not -> "game draw" or "game not end yet"
+    for(int i=0; i<3; i++) // Check board full or not -> ture: "game draw", false: "game not end yet"
     {
         if(board[i][0] == Piece::none || board[i][1]== Piece::none || board[i][2] == Piece::none)
             return Winner::uncertain;
