@@ -1,5 +1,4 @@
 #include "GameCanvas.h"
-#include <bits/stdc++.h>
 #include <windows.h>
 
 using namespace cv;
