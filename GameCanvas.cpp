@@ -1,5 +1,5 @@
 #include "GameCanvas.h"
-#include <windows.h>
+#include <windows.h>  // Use to get user's screen resolution. fun: GetSystemMetrics(SM_CXSCREEN) 、 GetSystemMetrics(SM_CYSCREEN) 
 
 using namespace cv;
 
