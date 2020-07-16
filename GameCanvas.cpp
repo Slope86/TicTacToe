@@ -1,7 +1,14 @@
 #include "GameCanvas.h"
-#include <windows.h>  // Use to get user's screen resolution. fun: GetSystemMetrics(SM_CXSCREEN) 、 GetSystemMetrics(SM_CYSCREEN) 
+#include <windows.h> // Use to get user's screen resolution. fun: GetSystemMetrics(SM_CXSCREEN) ¡B GetSystemMetrics(SM_CYSCREEN)
 
 using namespace cv;
+
+GameCanvas::GameCanvas(std::string name)
+{
+    windowName = name;
+    getDisplayWidth();
+    newGame();
+}
 
 GameCanvas::GameCanvas()
 {
@@ -26,17 +33,17 @@ Move::Move(int a,int b)
 // 1. check whether the input is legit
 // 2. place the piece on the board and draw it on the canvas
 // 3. check whether there is a winner, if so then end the game
-// 4. use miniMax algorithm to get computer's move
+// 4. use miniMax algorithm to get bot's move
 // 5. repeat step2. step3.
-// 6. display user's and computer's move
+// 6. display user's and bot's move
 void GameCanvas::playerInput(int x, int y)
 {
     // if game ended then start a new game
     if(winner != Winner::uncertain)
     {
         newGame();
-        if(nextMoveAI)// If human moved first and draw in the last game,computer move first in the next game
-            aiMove();
+        if(nextMoveBOT)// If human moved first and draw in the last game,bot move first in the next game
+            botMove();
         return;
     }
 
@@ -46,7 +53,7 @@ void GameCanvas::playerInput(int x, int y)
     {
         humanMove(playerMove);
         if(winner == Winner::uncertain)// check game end or not after human's turn
-            aiMove();
+            botMove();
     }
 }
 
@@ -57,21 +64,21 @@ void GameCanvas::humanMove(Move move)
     winner = checkWinner();
     if(winner != Winner::uncertain)
     {
-        nextMoveAI = true;
+        nextMoveBOT = true;
         gameEnd();
     }
     displayCanvas();
 }
 
-void GameCanvas::aiMove()
+void GameCanvas::botMove()
 {
     Move move = miniMax();
-    board[move.x][move.y]=Piece::ai;
+    board[move.x][move.y]=Piece::bot;
     drawX(move);
     winner = checkWinner();
     if(winner != Winner::uncertain)
     {
-        nextMoveAI = false;
+        nextMoveBOT = false;
         gameEnd();
     }
     displayCanvas();
@@ -106,12 +113,12 @@ Winner GameCanvas::checkWinner()
     {
         if(     board[i][0] == board[i][1] && board[i][1] == board[i][2] && board[i][1] != Piece::none ||  // Check horizontals
                 board[0][i] == board[1][i] && board[1][i] == board[2][i] && board[1][i] != Piece::none )   // Check verticals
-            return (board[i][i]==Piece::ai) ? (Winner::ai) : (Winner::human) ;
+            return (board[i][i]==Piece::bot) ? (Winner::bot) : (Winner::human) ;
     }
 
     if(     board[0][0] == board[1][1] && board[1][1] == board[2][2] && board[1][1] != Piece::none || // Check diagonals
             board[0][2] == board[1][1] && board[1][1] == board[2][0] && board[1][1] != Piece::none )
-        return (board[1][1]==Piece::ai) ? (Winner::ai) : (Winner::human) ;
+        return (board[1][1]==Piece::bot) ? (Winner::bot) : (Winner::human) ;
 
     for(int i=0; i<3; i++) // Check board full or not -> "game draw" or "game not end yet"
     {
@@ -129,7 +136,7 @@ void GameCanvas::gameEnd()
     case Winner::human :
         putText(canvas, std::string("human win !!!"), Point(def_width/10-15,def_width*7/6), 0, def_width/150, Scalar(0,255,0),3);
         break;
-    case Winner::ai :
+    case Winner::bot :
         putText(canvas, std::string("AI win !!!"), Point(def_width/10-def_width/24,def_width*7/6), 0, def_width/150, Scalar(0,0,255),3);
         break;
     case Winner::draw :
@@ -153,7 +160,7 @@ Move GameCanvas::miniMax()
         {
             if (board[i][j] == Piece::none)
             {
-                board[i][j] = Piece::ai;
+                board[i][j] = Piece::bot;
                 int tmp = maxSearch();
                 if (tmp < score)
                 {
@@ -183,7 +190,7 @@ int GameCanvas::maxSearch()
     {
     case Winner::human :
         return 1;
-    case Winner::ai :
+    case Winner::bot :
         return -1;
     case Winner::draw :
         return 0;
@@ -211,7 +218,7 @@ int GameCanvas::minSearch()
     {
     case Winner::human :
         return 1;
-    case Winner::ai :
+    case Winner::bot :
         return -1;
     case Winner::draw :
         return 0;
@@ -224,7 +231,7 @@ int GameCanvas::minSearch()
         {
             if (board[i][j] == Piece::none)
             {
-                board[i][j] = Piece::ai;
+                board[i][j] = Piece::bot;
                 score = std::min(score, maxSearch());
                 board[i][j] = Piece::none;
             }
@@ -237,7 +244,7 @@ void GameCanvas::displayCanvas()
 {
     cv::Mat resize_canvas;
     cv::resize(canvas, resize_canvas, cv::Size(), (float)width/def_width, (float)width/def_width);
-    imshow("Tie Tac Toe", resize_canvas);
+    imshow(windowName, resize_canvas);
 }
 
 void GameCanvas::drawBoard()
@@ -275,5 +282,5 @@ void GameCanvas::getDisplayWidth()
 {
     int ScreenW  = (int) GetSystemMetrics(SM_CXSCREEN);
     int ScreenH = (int) GetSystemMetrics(SM_CYSCREEN);
-    width = def_width*0.75*(float)std::min((float)ScreenW/def_width,(float)ScreenH/def_high) - 20;
+    width = def_width*0.75*(float)std::min((float)ScreenW/def_width,(float)ScreenH/def_high); // set display width to 3/4 of user's screen
 }
