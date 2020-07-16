@@ -179,7 +179,7 @@ Move GameCanvas::miniMax()
 
 int GameCanvas::maxSearch()
 {
-    switch (Winner winner = checkWinner())
+    switch (checkWinner())
     {
     case Winner::human :
         return 1;
@@ -207,7 +207,7 @@ int GameCanvas::maxSearch()
 
 int GameCanvas::minSearch()
 {
-    switch (Winner winner = checkWinner())
+    switch (checkWinner())
     {
     case Winner::human :
         return 1;
