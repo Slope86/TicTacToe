@@ -5,7 +5,7 @@
 enum class Piece { human, bot, none};
 enum class Winner { human, bot, draw, uncertain}; //uncertain = game not end yet
 
-// move of the piece, for exsample:
+// move of the piece, for example:
 // Move(0,0)    Move(1,0)    Move(2,1)
 // O | - | -    - | O | -    - | - | -
 // - | - | -    - | - | -    - | - | O
